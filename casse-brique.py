@@ -58,7 +58,6 @@ def ball_move():
                     c.itemconfigure(score_text, text="score : "+str(round(score/nb_briques*100, 1))+str("%"))
                     c.itemconfigure(briques_text, text="cassé : "+str(score))
                     if score == nb_briques:
-                        print("vous avez gagné")
                         retry_window("gagné")
                         return None
 
@@ -70,7 +69,6 @@ def ball_move():
     if by1 <= 0 or 42 in c.find_overlapping(coord_plat[0], coord_plat[1], coord_plat[2], coord_plat[3]):
         dy = -dy
     if by2 >= 600:
-        print("vous avez perdu")
         retry_window("perdu")
         return None
     c.move(ball, dx, dy)
