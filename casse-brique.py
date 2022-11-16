@@ -50,7 +50,7 @@ def ball_move():
         for elt in line:
             if elt not in del_elt:
                 coord = c.coords(elt)
-                if 42 in c.find_overlapping(coord[0], coord[1], coord[2], coord[3]):
+                if 42 in c.find_overlapping(*coord):
                     dy = -dy
                     c.delete(elt)
                     del_elt.append(elt)
@@ -66,7 +66,7 @@ def ball_move():
         dx = -dx
     if bx2 >= 800:
         dx = -dx
-    if by1 <= 0 or 42 in c.find_overlapping(coord_plat[0], coord_plat[1], coord_plat[2], coord_plat[3]):
+    if by1 <= 0 or 42 in c.find_overlapping(*coord_plat):
         dy = -dy
     if by2 >= 600:
         retry_window("perdu")
@@ -83,6 +83,7 @@ ball_speed = 3
 del_elt = []
 score = 0
 nb_briques = 8*5
+colors = 'red'
 
 c = Canvas(fen1, bg='black', height=600, width=800)
 c.pack()
@@ -93,9 +94,13 @@ briques = []
 for i in range(8):
     briques.append([])
     for j in range(5):
-        briques[-1].append(c.create_rectangle(i*100, j*30, i*100+100, j*30+30, fill='red'))
+        briques[-1].append(c.create_rectangle(i*100, j*30, i*100+100, j*30+30, fill=colors))
+        if colors == 'red':
+            colors = 'blue'
+        else:
+            colors = 'red'
 
-ball = c.create_oval(375, 275, 425, 325, fill='green')
+ball = c.create_oval(380, 280, 420, 320, fill='green')
 score_text = c.create_text(700, 550, text="score : 0%", font=('Helvetica 15 bold'), fill='white')
 briques_text = c.create_text(700, 500, text="cassé : 0", font=('Helvetica 15 bold'), fill='white')
 
