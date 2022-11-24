@@ -3,6 +3,16 @@ from tkinter import *
 import sys
 import os
 
+#~ Customisation ~#
+use_cursor       = False
+color_briques    = 'purple'
+color_plateforme = 'blue'
+color_ball       = 'orange'
+ball_diameter    = 30
+plateforme_long  = 100
+#~ Customisation ~#
+
+
 touches = set()
 
 def enfoncer(event):
@@ -42,8 +52,9 @@ def retry_window(a_gagne: str):
     btn_quit = Button(fen2, text='Non', command=fen1.destroy)
     btn_quit.pack(side=RIGHT)
 
-
 def deplacer_plateforme():
+    if use_cursor:
+        return None
     coords = c.coords(plateforme)
     if 'Left' in touches and coords[0] >= 3:
         c.move(plateforme, -speed_plat, 0)
@@ -102,7 +113,7 @@ alt = 1
 c = Canvas(fen1, bg='black', height=600, width=800)
 c.pack()
 
-plateforme = c.create_rectangle(350, 600, 450, 575, fill='blue')
+plateforme = c.create_rectangle(400-plateforme_long//2, 590, 400+plateforme_long//2, 580, fill=color_plateforme)
 
 briques = []
 
@@ -110,15 +121,15 @@ def fill_line(i, dec=0):
     color = 'red'
     tab = []
     if dec != 0:
-        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color))
+        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color_briques))
         dec = 50
     else:
-        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill=color))
+        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill=color_briques))
         dec = 100
     for j in range(dec, 700+dec, 100):
-        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill=color))
+        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill=color_briques))
     if dec == 50:
-        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill=color))
+        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill=color_briques))
     return tab
 
 for i in range(5):
@@ -128,15 +139,20 @@ for i in range(5):
 
 nb_briques = sum([len(i) for i in briques])
 
-ball = c.create_oval(380, 280, 420, 320, fill='green')
+ball = c.create_oval(400-ball_diameter//2, 300-ball_diameter//2, 400+ball_diameter//2, 300+ball_diameter//2, fill=color_ball)
 score_text = c.create_text(700, 550, text="score : 0%", font=('Helvetica 15 bold'), fill='white')
 briques_text = c.create_text(700, 500, text="cassé : 0", font=('Helvetica 15 bold'), fill='white')
+
+def f(event):
+    if use_cursor:
+        c.coords(plateforme, event.x-50, 590, event.x+50, 580)
 
 fen1.bind('<KeyPress>', enfoncer)
 fen1.bind('<KeyRelease>', relacher)
 fen1.bind('p', start_ball)
 fen1.bind('r', replay)
 fen1.bind('q', quit)
+fen1.bind('<Motion>', f)
 
 ball_move()
 
