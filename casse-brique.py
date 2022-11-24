@@ -8,10 +8,10 @@ use_cursor       = True
 color_briques    = 'purple'
 color_plateforme = 'blue'
 color_ball       = 'orange'
-ball_diameter    = 30
+ball_diameter    = 20
 plateforme_long  = 100
 ball_speed       = 1
-speed_plat       = 3
+speed_plat       = 10
 #~ Customisation ~#
 
 def enfoncer(event):
@@ -64,6 +64,10 @@ def ball_move():
         last_state = (dx, dy)
     deplacer_plateforme()
     (bx1,by1,bx2,by2) = c.coords(ball)
+    if by1 < 0:
+        c.coords(ball, bx1, 1, bx2, ball_diameter+1)
+        dy = abs(dy)
+
     coord_plat = c.coords(plateforme)
     coord_ball = c.coords(ball)
 
@@ -82,21 +86,18 @@ def ball_move():
                         retry_window("gagné")
                         return None
 
-    if bx1 <= 0:
+    if bx1 <= 0 or bx2 >= 800:
         dx = -dx
-    if bx2 >= 800:
-        dx = -dx
-    if by1 <= 0 or ball in c.find_overlapping(*coord_plat):
+    if ball in c.find_overlapping(*coord_plat):
         dy = -dy
         c.coords(ball, coord_ball[0]-1, coord_ball[1]-1, coord_ball[2]-1, coord_ball[3]-1)
     if by2 >= 600:
         retry_window("perdu")
         return None
     c.move(ball, dx, dy)
-    fen1.after(3, ball_move)
+    fen1.after(2, ball_move)
 
 def fill_line(i, dec):
-    color = 'red'
     tab = []
     if dec == 50:
         tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color_briques))
