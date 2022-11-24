@@ -91,6 +91,8 @@ def ball_move():
     if ball in c.find_overlapping(*coord_plat):
         dy = -dy
         c.coords(ball, coord_ball[0]-1, coord_ball[1]-1, coord_ball[2]-1, coord_ball[3]-1)
+    if by1 <= 0:
+        dy = -dy
     if by2 >= 600:
         retry_window("perdu")
         return None
