@@ -2,8 +2,6 @@
 from tkinter import *
 import sys
 import os
-from math import pi, sin, cos, tan
-import random
 
 #~ Customisation ~#
 use_cursor       = True
@@ -12,10 +10,9 @@ color_plateforme = 'blue'
 color_ball       = 'orange'
 ball_diameter    = 30
 plateforme_long  = 100
+ball_speed       = 1
+speed_plat       = 3
 #~ Customisation ~#
-
-
-touches = set()
 
 def enfoncer(event):
     touches.add(event.keysym)
@@ -62,7 +59,7 @@ def deplacer_plateforme():
         c.move(plateforme, speed_plat, 0)
 
 def ball_move():
-    global del_elt, score, score_text, dx, dy, last_state, angle, tampon
+    global del_elt, score, score_text, dx, dy, last_state
     if dx != 0 or dy != 0:
         last_state = (dx, dy)
     deplacer_plateforme()
@@ -85,7 +82,6 @@ def ball_move():
                         retry_window("gagné")
                         return None
 
-
     if bx1 <= 0:
         dx = -dx
     if bx2 >= 800:
@@ -97,16 +93,32 @@ def ball_move():
         retry_window("perdu")
         return None
     c.move(ball, dx, dy)
-    fen1.after(ball_speed, ball_move)
+    fen1.after(3, ball_move)
 
+def fill_line(i, dec):
+    color = 'red'
+    tab = []
+    if dec == 50:
+        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color_briques))
+    else:
+        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill=color_briques))
+    for j in range(dec, 700+dec, 100):
+        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill=color_briques))
+    if dec == 50:
+        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill=color_briques))
+    return tab
+
+def f(event):
+    if use_cursor:
+        c.coords(plateforme, event.x-50, 590, event.x+50, 580)
+
+touches = set()
 fen1 = Tk()
 fen1.title('spterm')
 fen1.geometry("800x600")
 
 dx = dy = 0
-speed_plat = 3
-last_state = (1,1)
-ball_speed = 3
+last_state = (ball_speed, ball_speed)
 del_elt = []
 score = 0
 colors = 'red'
@@ -119,23 +131,8 @@ plateforme = c.create_rectangle(400-plateforme_long//2, 590, 400+plateforme_long
 
 briques = []
 
-def fill_line(i, dec=0):
-    color = 'red'
-    tab = []
-    if dec != 0:
-        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color_briques))
-        dec = 50
-    else:
-        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill=color_briques))
-        dec = 100
-    for j in range(dec, 700+dec, 100):
-        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill=color_briques))
-    if dec == 50:
-        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill=color_briques))
-    return tab
-
 for i in range(5):
-    line = fill_line(i, alt%2)
+    line = fill_line(i, (alt%2)*50+50)
     briques.append(line)
     alt += 1
 
@@ -144,10 +141,6 @@ nb_briques = sum([len(i) for i in briques])
 ball = c.create_oval(400-ball_diameter//2, 300-ball_diameter//2, 400+ball_diameter//2, 300+ball_diameter//2, fill=color_ball)
 score_text = c.create_text(700, 550, text="score : 0%", font=('Helvetica 15 bold'), fill='white')
 briques_text = c.create_text(700, 500, text="cassé : 0", font=('Helvetica 15 bold'), fill='white')
-
-def f(event):
-    if use_cursor:
-        c.coords(plateforme, event.x-50, 590, event.x+50, 580)
 
 fen1.bind('<KeyPress>', enfoncer)
 fen1.bind('<KeyRelease>', relacher)
