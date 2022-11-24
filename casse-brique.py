@@ -14,13 +14,23 @@ def relacher(event):
     except:
         pass
 
-def replay():
+def replay(arg=0):
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
+def start_ball(arg=0):
+    global dx, dy, speed_plat
+    if dx == 0 and dy == 0:
+        dx, dy = last_state
+        speed_plat = 3
+    else:
+        dx = dy = 0
+        speed_plat = 0
 
 def retry_window(a_gagne: str):
     fen2 = Toplevel(fen1)
+    fen2.bind('r', replay)
+    fen2.bind('q', quit)
     lbl1 = Label(fen2, text="Vous avez "+a_gagne)
     lbl1.pack(side=TOP)
     lbl2 = Label(fen2, text="Relancer ?")
@@ -36,12 +46,14 @@ def retry_window(a_gagne: str):
 def deplacer_plateforme():
     coords = c.coords(plateforme)
     if 'Left' in touches and coords[0] >= 3:
-        c.move(plateforme, -3, 0)
+        c.move(plateforme, -speed_plat, 0)
     if "Right" in touches and coords[2] <= 797:
-        c.move(plateforme, 3, 0)
+        c.move(plateforme, speed_plat, 0)
 
 def ball_move():
-    global dx, dy, del_elt, score, score_text
+    global del_elt, score, score_text, dx, dy, last_state
+    if dx != 0 or dy != 0:
+        last_state = (dx, dy)
     deplacer_plateforme()
     (bx1,by1,bx2,by2) = c.coords(ball)
     coord_plat = c.coords(plateforme)
@@ -78,11 +90,12 @@ fen1 = Tk()
 fen1.title('spterm')
 fen1.geometry("800x600")
 
-dx = dy = 1
+dx = dy = 0
+speed_plat = 3
+last_state = (1,1)
 ball_speed = 3
 del_elt = []
 score = 0
-nb_briques = 8*5
 colors = 'red'
 alt = 1
 
@@ -94,19 +107,18 @@ plateforme = c.create_rectangle(350, 600, 450, 575, fill='blue')
 briques = []
 
 def fill_line(i, dec=0):
+    color = 'red'
     tab = []
     if dec != 0:
-        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill='red'))
+        tab.append(c.create_rectangle(0, i*30, 50, i*30+30, fill=color))
         dec = 50
     else:
-        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill='red'))
+        tab.append(c.create_rectangle(0, i*30, 100, i*30+30, fill=color))
         dec = 100
-    for j in range(dec, 800+dec+1, 100):
-        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill='red'))
-    if dec != 100:
-        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill='red'))
-    else:
-        tab.append(c.create_rectangle(700, i*30, 800, i*30+30, fill='red'))
+    for j in range(dec, 700+dec, 100):
+        tab.append(c.create_rectangle(j, i*30, j+100, i*30+30, fill=color))
+    if dec == 50:
+        tab.append(c.create_rectangle(750, i*30, 800, i*30+30, fill=color))
     return tab
 
 for i in range(5):
@@ -114,12 +126,17 @@ for i in range(5):
     briques.append(line)
     alt += 1
 
+nb_briques = sum([len(i) for i in briques])
+
 ball = c.create_oval(380, 280, 420, 320, fill='green')
 score_text = c.create_text(700, 550, text="score : 0%", font=('Helvetica 15 bold'), fill='white')
 briques_text = c.create_text(700, 500, text="cassé : 0", font=('Helvetica 15 bold'), fill='white')
 
 fen1.bind('<KeyPress>', enfoncer)
 fen1.bind('<KeyRelease>', relacher)
+fen1.bind('p', start_ball)
+fen1.bind('r', replay)
+fen1.bind('q', quit)
 
 ball_move()
 
