@@ -2,9 +2,11 @@
 from tkinter import *
 import sys
 import os
+from math import pi, sin, cos, tan
+import random
 
 #~ Customisation ~#
-use_cursor       = False
+use_cursor       = True
 color_briques    = 'purple'
 color_plateforme = 'blue'
 color_ball       = 'orange'
@@ -53,8 +55,6 @@ def retry_window(a_gagne: str):
     btn_quit.pack(side=RIGHT)
 
 def deplacer_plateforme():
-    if use_cursor:
-        return None
     coords = c.coords(plateforme)
     if 'Left' in touches and coords[0] >= 3:
         c.move(plateforme, -speed_plat, 0)
@@ -62,12 +62,13 @@ def deplacer_plateforme():
         c.move(plateforme, speed_plat, 0)
 
 def ball_move():
-    global del_elt, score, score_text, dx, dy, last_state
+    global del_elt, score, score_text, dx, dy, last_state, angle, tampon
     if dx != 0 or dy != 0:
         last_state = (dx, dy)
     deplacer_plateforme()
     (bx1,by1,bx2,by2) = c.coords(ball)
     coord_plat = c.coords(plateforme)
+    coord_ball = c.coords(ball)
 
     for line in briques:
         for elt in line:
@@ -91,6 +92,7 @@ def ball_move():
         dx = -dx
     if by1 <= 0 or ball in c.find_overlapping(*coord_plat):
         dy = -dy
+        c.coords(ball, coord_ball[0]-1, coord_ball[1]-1, coord_ball[2]-1, coord_ball[3]-1)
     if by2 >= 600:
         retry_window("perdu")
         return None
