@@ -10,7 +10,7 @@ color_plateforme = 'blue'
 color_ball       = 'orange'
 ball_diameter    = 20
 plateforme_long  = 100
-ball_speed       = 1
+ball_speed       = 2
 speed_plat       = 10
 #~ Customisation ~#
 
@@ -77,6 +77,7 @@ def ball_move():
                 coord = c.coords(elt)
                 if ball in c.find_overlapping(*coord):
                     dy = -dy
+                    c.coords(ball, coord_ball[0], coord_ball[1]+2, coord_ball[2], coord_ball[3]+2)
                     c.delete(elt)
                     del_elt.append(elt)
                     score += 1
@@ -91,13 +92,14 @@ def ball_move():
     if ball in c.find_overlapping(*coord_plat):
         dy = -dy
         c.coords(ball, coord_ball[0]-1, coord_ball[1]-1, coord_ball[2]-1, coord_ball[3]-1)
+        #c.move(ball, 1, 1)
     if by1 <= 0:
         dy = -dy
     if by2 >= 600:
         retry_window("perdu")
         return None
     c.move(ball, dx, dy)
-    fen1.after(2, ball_move)
+    fen1.after(5, ball_move)
 
 def fill_line(i, dec):
     tab = []
