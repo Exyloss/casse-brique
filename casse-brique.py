@@ -3,6 +3,10 @@ from tkinter import *
 import sys
 import os
 from random import randint
+from playsound import playsound
+import pygame
+
+pygame.mixer.init()
 
 couleurs = ["maroon", "darkred", "firebrick", "red", "salmon", "tomato", "coral", "orangered",
             "chocolate", "sandybrown", "darkorange", "orange", "darkgoldenrod", "goldenrod",
@@ -30,6 +34,10 @@ if color_plateforme == 'random':
     color_plateforme = couleurs[r[1]]
 if color_ball == 'random':
     color_ball = couleurs[r[2]]
+
+
+def sound():
+    playsound('bonk.mp3')
 
 def enfoncer(event):
     touches.add(event.keysym)
@@ -93,6 +101,8 @@ def ball_move():
             if elt not in del_elt:
                 coord = c.coords(elt)
                 if ball in c.find_overlapping(*coord):
+                    pygame.mixer.music.load("bonk.mp3")
+                    pygame.mixer.music.play(loops=0)
                     dy = -dy
                     c.coords(ball, coord_ball[0], coord_ball[1]+2, coord_ball[2], coord_ball[3]+2)
                     c.delete(elt)
@@ -108,6 +118,8 @@ def ball_move():
         dx = -dx
     if ball in c.find_overlapping(*coord_plat):
         dy = -dy
+        pygame.mixer.music.load("bonk.mp3")
+        pygame.mixer.music.play(loops=0)
         c.coords(ball, coord_ball[0], coord_ball[1]-1, coord_ball[2], coord_ball[3]-1)
     if by1 <= 0:
         dy = -dy
