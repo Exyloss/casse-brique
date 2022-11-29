@@ -2,17 +2,34 @@
 from tkinter import *
 import sys
 import os
+from random import randint
+
+couleurs = ["maroon", "darkred", "firebrick", "red", "salmon", "tomato", "coral", "orangered",
+            "chocolate", "sandybrown", "darkorange", "orange", "darkgoldenrod", "goldenrod",
+            "gold", "olive", "yellow", "yellowgreen", "greenyellow", "chartreuse", "lawngreen",
+            "green", "lime", "limegreen", "springgreen", "mediumspringgreen", "turquoise",
+            "lightseagreen", "mediumturquoise", "teal", "darkcyan", "aqua", "cyan", "darkturquoise",
+            "deepskyblue", "dodgerblue", "royalblue", "navy", "darkblue", "mediumblue"
+]
 
 #~ Customisation ~#
 use_cursor       = True
-color_briques    = 'purple'
-color_plateforme = 'blue'
-color_ball       = 'orange'
+color_briques    = 'random'
+color_plateforme = 'random'
+color_ball       = 'random'
 ball_diameter    = 20
 plateforme_long  = 100
 ball_speed       = 2
 speed_plat       = 10
 #~ Customisation ~#
+
+r = [randint(0, len(couleurs)-1) for _ in range(3)]
+if color_briques == 'random':
+    color_briques = couleurs[r[0]]
+if color_plateforme == 'random':
+    color_plateforme = couleurs[r[1]]
+if color_ball == 'random':
+    color_ball = couleurs[r[2]]
 
 def enfoncer(event):
     touches.add(event.keysym)
